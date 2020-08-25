@@ -3,6 +3,6 @@ import styles from './Scoreboard.module.css'
 
 export default function Scoreboard () {
   return (
-    <div>Scoreboard</div>
+    <div className={styles.container}>Scoreboard</div>
   )
 }
