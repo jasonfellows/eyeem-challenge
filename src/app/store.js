@@ -1,8 +1,8 @@
 import { configureStore } from '@reduxjs/toolkit'
-import counterReducer from '../features/counter/counterSlice'
+import memoryReducer from '../features/memory/memorySlice'
 
 export default configureStore({
   reducer: {
-    counter: counterReducer
+    memory: memoryReducer
   }
 })
