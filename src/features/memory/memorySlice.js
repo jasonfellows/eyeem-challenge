@@ -24,22 +24,40 @@ export const memorySlice = createSlice({
       })
       state.players = players
     },
-    completeGame: state => {
-      state.memory.gameActive = false
-      state.memory.gameComplete = true
-    },
-    completeTurn: (state, action) => {
+    checkTurn: (state, action) => {
+      const cards = state.cards.slice()
       const players = state.players.slice()
-      // set current active player inactive
-      // cycle to next index or first if current is last and set active
+      const shownCards = cards.filter(card => card.shown && !card.won)
+
+      if (shownCards.length === 2) {
+        if (shownCards[0].imgSrc === shownCards[1].imgSrc) {
+          players.forEach(player => {
+            if (player.activeTurn) player.pairsWon++
+          })
+
+          cards.forEach(card => {
+            if (card.imgSrc === shownCards[0].imgSrc) card.won = true
+          })
+
+          const wonCards = cards.filter(card => card.shown)
+          if (wonCards.length === state.boardSize) {
+            state.gameActive = false
+            state.gameComplete = true
+          }
+        } else {
+          cards.forEach(card => {
+            if (!card.won) card.shown = false
+          })
+        }
+      }
+
+      state.cards = cards
       state.players = players
     },
     flipCard: (state, action) => {
       const cards = state.cards.slice()
-      // flip one card
-      // check if two cards are flipped
-      // if two with same src are flipped, add a win to active player, set both cards won
-      // else unflip all
+      const shownCards = cards.filter(card => card.shown && !card.won)
+      if (shownCards.length < 2) cards[action.payload].shown = true
       state.cards = cards
     },
     removePlayer: (state, action) => {
@@ -53,6 +71,7 @@ export const memorySlice = createSlice({
     startGame: (state, action) => {
       state.cards = action.payload
       state.gameActive = true
+      state.gameComplete = false
       state.loading = false
       const players = state.players.slice()
       players[0].activeTurn = true
@@ -63,13 +82,19 @@ export const memorySlice = createSlice({
 
 export const {
   addPlayer,
-  completeGame,
-  completeTurn,
+  checkTurn,
   flipCard,
   removePlayer,
   setLoading,
   startGame
 } = memorySlice.actions
+
+export const flipCardAsync = (index) => (dispatch, getState) => {
+  dispatch(flipCard(index))
+  setTimeout(() => {
+    dispatch(checkTurn())
+  }, 1000)
+}
 
 export const startGameAsync = () => async (dispatch, getState) => {
   // const { boardSize } = getState()
@@ -79,33 +104,35 @@ export const startGameAsync = () => async (dispatch, getState) => {
   // fetch from EyeEm API
   // map response to cards and add cards
 
-  dispatch(startGame([
+  const cards = [
     {
       shown: false,
-      imageSrc: 'https://placekitten.com/200/200',
+      imgSrc: 'https://placekitten.com/200/200',
       won: false
     }, {
       shown: false,
-      imageSrc: 'https://placekitten.com/200/200',
+      imgSrc: 'https://placekitten.com/200/300',
       won: false
     }, {
       shown: false,
-      imageSrc: 'https://placekitten.com/200/200',
+      imgSrc: 'https://placekitten.com/200/200',
       won: false
     }, {
       shown: false,
-      imageSrc: 'https://placekitten.com/200/200',
+      imgSrc: 'https://placekitten.com/200/600',
       won: false
     }, {
       shown: false,
-      imageSrc: 'https://placekitten.com/200/200',
+      imgSrc: 'https://placekitten.com/200/600',
       won: false
     }, {
       shown: false,
-      imageSrc: 'https://placekitten.com/200/200',
+      imgSrc: 'https://placekitten.com/200/300',
       won: false
     }
-  ]))
+  ]
+
+  dispatch(startGame(cards))
 }
 
 export const selectCards = state => state.memory.cards
