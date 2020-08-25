@@ -1,11 +1,25 @@
 import React from 'react'
-import styles from './Memory.module.css'
+import { useSelector } from 'react-redux'
+import { selectGameState } from './memorySlice'
+import Game from '../../components/Game'
+import Loading from '../../components/Loading'
+import Scoreboard from '../../components/Scoreboard'
+import Welcome from '../../components/Welcome'
 
 export function Memory () {
+  const {
+    gameActive,
+    gameComplete,
+    loading
+  } = useSelector(selectGameState)
+
+  if (!gameActive && !gameComplete) return <Welcome />
+
   return (
     <>
-      <header className={styles.header} />
-      <main className={styles.main} />
+      {loading && <Loading />}
+      {gameComplete && <Scoreboard />}
+      <Game />
     </>
   )
 }

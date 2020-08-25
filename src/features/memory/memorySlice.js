@@ -63,4 +63,10 @@ export const startGameAsync = () => async (dispatch, getState) => {
   dispatch(setLoading(false))
 }
 
+export const selectGameState = state => ({
+  gameActive: state.gameActive,
+  gameComplete: state.gameComplete,
+  loading: state.loading
+})
+
 export default memorySlice.reducer
