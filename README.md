@@ -1,6 +1,16 @@
-EyeEm Memory Game
+# EyeEm Memory Game
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app), using the [Redux](https://redux.js.org/) and [Redux Toolkit](https://redux-toolkit.js.org/) template.
+
+## Live Demo
+
+The project is running [here](https://sleepy-bartik-5c39b4.netlify.app/) on Netlify
+
+## Run locally
+
+1) clone repo
+2) run `yarn`
+3) run `yarn start`
 
 ## Available Scripts
 
