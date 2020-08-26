@@ -115,7 +115,7 @@ export const flipCardAsync = (index) => dispatch => {
 
 export const startGameAsync = () => async (dispatch, getState) => {
   const { boardSize } = getState().memory
-  const querySize = boardSize / 2
+  const querySize = boardSize / 2 + 4
   const offset = Math.floor(Math.random() * 100)
 
   dispatch(setLoading(true))
@@ -128,7 +128,7 @@ export const startGameAsync = () => async (dispatch, getState) => {
     shown: false,
     imgSrc: photo.thumbUrl.split(/h\/\w+\//g).join('h/600/'),
     won: false
-  }))
+  })).slice(0, boardSize / 2)
 
   dispatch(startGame(shuffleArray(cards.concat(cards))))
 }
