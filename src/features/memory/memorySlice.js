@@ -1,9 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit'
+import { shuffleArray } from '../../utils'
 
 export const memorySlice = createSlice({
   name: 'memory',
   initialState: {
-    boardSize: 6,
+    boardSize: 8,
     cards: [],
     gameActive: false,
     gameComplete: false,
@@ -11,7 +12,7 @@ export const memorySlice = createSlice({
     players: [{
       activeTurn: false,
       name: 'player1',
-      pairsWon: 0
+      score: 0
     }]
   },
   reducers: {
@@ -20,7 +21,7 @@ export const memorySlice = createSlice({
       players.push({
         activeTurn: false,
         name: action.payload,
-        pairsWon: 0
+        score: 0
       })
       state.players = players
     },
@@ -32,7 +33,7 @@ export const memorySlice = createSlice({
       if (shownCards.length === 2) {
         if (shownCards[0].imgSrc === shownCards[1].imgSrc) {
           players.forEach(player => {
-            if (player.activeTurn) player.pairsWon++
+            if (player.activeTurn) player.score++
           })
 
           cards.forEach(card => {
@@ -43,11 +44,23 @@ export const memorySlice = createSlice({
           if (wonCards.length === state.boardSize) {
             state.gameActive = false
             state.gameComplete = true
+
+            players.forEach(player => {
+              player.activeTurn = false
+            })
           }
         } else {
           cards.forEach(card => {
             if (!card.won) card.shown = false
           })
+
+          let activeIndex
+          players.forEach((player, index) => {
+            if (player.activeTurn) activeIndex = index
+          })
+          players[activeIndex].activeTurn = false
+          if (activeIndex === players.length - 1) players[0].activeTurn = true
+          else players[activeIndex + 1].activeTurn = true
         }
       }
 
@@ -73,7 +86,11 @@ export const memorySlice = createSlice({
       state.gameActive = true
       state.gameComplete = false
       state.loading = false
+
       const players = state.players.slice()
+      players.forEach(player => {
+        player.score = 0
+      })
       players[0].activeTurn = true
       state.players = players
     }
@@ -89,50 +106,44 @@ export const {
   startGame
 } = memorySlice.actions
 
-export const flipCardAsync = (index) => (dispatch, getState) => {
+export const flipCardAsync = (index) => dispatch => {
   dispatch(flipCard(index))
   setTimeout(() => {
     dispatch(checkTurn())
-  }, 1000)
+  }, 500)
 }
 
 export const startGameAsync = () => async (dispatch, getState) => {
-  // const { boardSize } = getState()
+  const { boardSize } = getState().memory
 
   dispatch(setLoading(true))
 
-  // fetch from EyeEm API
-  // map response to cards and add cards
+  const url = `https://api.eyeem.com/v2/photos?client_id=9iNUTAc4FCsRj5Co6vJgzVySHxuJtL3Y&limit=${boardSize}&type=popular`
+  const response = await fetch(url)
+  const body = await response.json()
+  console.log(body)
 
   const cards = [
     {
       shown: false,
-      imgSrc: 'https://placekitten.com/200/200',
+      imgSrc: 'https://placekitten.com/600/600',
       won: false
     }, {
       shown: false,
-      imgSrc: 'https://placekitten.com/200/300',
+      imgSrc: 'https://placekitten.com/700/700',
       won: false
     }, {
       shown: false,
-      imgSrc: 'https://placekitten.com/200/200',
+      imgSrc: 'https://placekitten.com/800/800',
       won: false
     }, {
       shown: false,
-      imgSrc: 'https://placekitten.com/200/600',
-      won: false
-    }, {
-      shown: false,
-      imgSrc: 'https://placekitten.com/200/600',
-      won: false
-    }, {
-      shown: false,
-      imgSrc: 'https://placekitten.com/200/300',
+      imgSrc: 'https://placekitten.com/900/900',
       won: false
     }
   ]
 
-  dispatch(startGame(cards))
+  dispatch(startGame(shuffleArray(cards.concat(cards))))
 }
 
 export const selectCards = state => state.memory.cards

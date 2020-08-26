@@ -1,0 +1,39 @@
+.container {
+  border-radius: .5rem;
+  display: inline-block;
+  margin-right: 4rem;
+  padding: 0.5rem 1rem;
+}
+
+.active {
+  background-color: #2a9d8f;
+  color: white;
+  position: relative;
+}
+
+.active:after {
+  content:'';
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  width: 0;
+  height: 0;
+  border-top: solid 10px #2a9d8f;
+  border-left: solid 10px transparent;
+  border-right: solid 10px transparent;
+}
+
+.container:last-child {
+  margin-right: 0;
+}
+
+.name {
+  font-weight: bold;
+  margin-bottom: .2rem;
+}
+
+.score {
+
+}

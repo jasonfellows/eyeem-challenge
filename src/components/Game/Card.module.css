@@ -5,23 +5,30 @@
   position: relative;
 }
 
+.show {
+  display: block;
+}
+
 .image {
+  background-size: cover;
+  background-repeat: no-repeat;
+  display: none;
   height: 100%;
-  width: 100%;
+  Width: 100%;
 }
 
 .back {
-  background-color: blue;
+  background-color: #264653;
   height: 100%;
+  cursor: pointer;
   width: 100%;
 }
 
 .won {
-  background-color: rgba(255, 255, 255, .5);
-  cursor: default;
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
+  background-color: rgba(255, 255, 255, .7);
   bottom: 0;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
 }

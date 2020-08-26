@@ -10,12 +10,16 @@ export default function Card ({ imgSrc, index, shown, won }) {
     dispatch(flipCardAsync(index))
   }
 
+  const cardStyles = () => {
+    let styles = { backgroundImage: `url("${imgSrc}")`}
+    if (shown) styles.display = 'block'
+    return styles
+  }
+
   return (
     <div className={styles.container} onClick={handleClick}>
-      {shown
-        ? <img alt='' src={imgSrc} styles={styles.image} />
-        : <div className={styles.back} />
-      }
+      <div className={styles.image} style={cardStyles()} />
+      <div className={styles.back} />
       {won && <div className={styles.won} />}
     </div>
   )

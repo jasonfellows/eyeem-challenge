@@ -10,12 +10,13 @@ export default function PlayersForm () {
   const dispatch = useDispatch()
 
   return (
-    <>
+    <div>
+      <h4>Add your players:</h4>
       {players && players.map((player, index) => <Player key={player.name + index} index={index} name={player.name} />)}
       <PlayerForm />
       <Button disabled={players.length === 0} onClick={() => dispatch(startGameAsync())}>
         Start game
       </Button>
-    </>
+    </div>
   )
 }
