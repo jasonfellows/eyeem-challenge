@@ -4,7 +4,7 @@ import { shuffleArray } from '../../utils'
 export const memorySlice = createSlice({
   name: 'memory',
   initialState: {
-    boardSize: 8,
+    boardSize: 12,
     cards: [],
     gameActive: false,
     gameComplete: false,
@@ -115,33 +115,20 @@ export const flipCardAsync = (index) => dispatch => {
 
 export const startGameAsync = () => async (dispatch, getState) => {
   const { boardSize } = getState().memory
+  const querySize = boardSize / 2
+  const offset = Math.floor(Math.random() * 100)
 
   dispatch(setLoading(true))
 
-  const url = `https://api.eyeem.com/v2/photos?client_id=9iNUTAc4FCsRj5Co6vJgzVySHxuJtL3Y&limit=${boardSize}&type=popular`
+  const url = `https://api.eyeem.com/v2/photos?client_id=9iNUTAc4FCsRj5Co6vJgzVySHxuJtL3Y&limit=${querySize}&type=popular&offset=${offset}`
   const response = await fetch(url)
   const body = await response.json()
-  console.log(body)
 
-  const cards = [
-    {
-      shown: false,
-      imgSrc: 'https://placekitten.com/600/600',
-      won: false
-    }, {
-      shown: false,
-      imgSrc: 'https://placekitten.com/700/700',
-      won: false
-    }, {
-      shown: false,
-      imgSrc: 'https://placekitten.com/800/800',
-      won: false
-    }, {
-      shown: false,
-      imgSrc: 'https://placekitten.com/900/900',
-      won: false
-    }
-  ]
+  const cards = body.photos.items.map(photo => ({
+    shown: false,
+    imgSrc: photo.thumbUrl.split(/h\/\w+\//g).join('h/600/'),
+    won: false
+  }))
 
   dispatch(startGame(shuffleArray(cards.concat(cards))))
 }
